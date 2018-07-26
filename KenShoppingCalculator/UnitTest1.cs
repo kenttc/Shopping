@@ -111,7 +111,7 @@ namespace KenShoppingCalculator
     {
         private Basket _basket;
         private PriceProvider _priceProvider;
-        const double breadReductionRateWhen2Butter = 0.5;
+
 
         public BasketCalculator(Basket basket, PriceProvider priceProvider)
         {
@@ -120,10 +120,12 @@ namespace KenShoppingCalculator
         }
         public double CalculateBasketPrice()
         {
-            
-            var discounts = GetDiscounts(_basket);
-            
-       
+
+            var discounts = new List<Discount>();
+
+            discounts.AddRange(_basket.GetButterDiscount());
+            discounts.AddRange(_basket.GetMilkDiscounts());
+
             return  _basket.Items.Select(x =>
             {
                 var discount = discounts.Where(y => y.ItemName == x.ItemName).ToList();
@@ -140,29 +142,38 @@ namespace KenShoppingCalculator
              
         }
 
-        public List<Discount> GetDiscounts(Basket basket)
-        {
-            var discounts = new List<Discount>();
-            var butterdiscount =
-                basket.Items.Where(x => x.ItemName == Product.Butter 
-                && x.ItemQty == 2).Select(x=> new Discount(Product.Bread, breadReductionRateWhen2Butter));
-
-            discounts.AddRange(butterdiscount);
-
-            var numDiscountToAdd = basket.Items.Where(x => x.ItemName == Product.Milk)
-             .Select(x => Math.Floor(Convert.ToDouble(x.ItemQty / 4))).FirstOrDefault();
-          //  var discounts = new List<Discount>();
-            for (var i = 0; i < numDiscountToAdd; i++)
-            {
-                discounts.Add(new Discount(Product.Milk, 0));
-            }
-            return discounts;
-
-        }
-
+     
     }
 
-    
+    public static class DiscountExtensions
+    {
+        const double breadReductionRateWhen2Butter = 0.5;
+        const int zeroValue = 0;
+        const int minMilkFor1ForFree = 4;
+        const int minButterCountForBreadDiscount = 2;
+
+        public static List<Discount> GetMilkDiscounts(this Basket basket)
+        {
+
+            var numDiscountToAdd = basket.Items.Where(x => x.ItemName == Product.Milk)
+                .Select(x => Math.Floor(Convert.ToDouble(x.ItemQty / minMilkFor1ForFree))).FirstOrDefault();
+            var discounts = new List<Discount>();
+            for (var i = 0; i < numDiscountToAdd; i++)
+            {
+                discounts.Add(new Discount(Product.Milk, zeroValue));
+            }
+            return discounts;
+        }
+
+
+        public static List<Discount> GetButterDiscount(this Basket basket)
+        {
+            return basket.Items.Where(x => x.ItemName == Product.Butter
+                         && x.ItemQty == minButterCountForBreadDiscount)
+                         .Select(x => new Discount(Product.Bread, breadReductionRateWhen2Butter)).ToList();
+            
+        }
+    }
     public class Discount
     {
         public Discount(Product itemName, double reductionRate)
@@ -187,7 +198,7 @@ namespace KenShoppingCalculator
         public List<BasketItem> Items { get; set; }
     }
 
-    public class BasketItem
+    public class BasketItem 
     {
         public BasketItem(Product name, int qty)
         {
@@ -198,6 +209,11 @@ namespace KenShoppingCalculator
         public Product ItemName { get; private set; }
 
         public int ItemQty { get; private set; }
+
+    }
+    public interface IDiscount
+    {
+        double GetReductionRate();
     }
 }
 
