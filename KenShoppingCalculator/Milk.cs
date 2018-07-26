@@ -21,7 +21,7 @@ namespace KenShoppingCalculator
 
         public List<Discount> GetDiscounts()
         {
-
+            //if this could be refactored out into another service that uses a DiscountProvider then this would be a poco which i think would be nice
             var discounts = new List<Discount>();
             for (var i = 0; i < Math.Floor(Convert.ToDouble(this.ItemQty / minMilkFor1ForFree)); i++)
             {
