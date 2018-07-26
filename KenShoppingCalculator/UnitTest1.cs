@@ -13,9 +13,9 @@ namespace KenShoppingCalculator
         {
             //arrange
             var basket = new Basket();
-            basket.Items.Add(new BasketItem("Milk", 1));
-            basket.Items.Add(new BasketItem("Bread", 1));
-            basket.Items.Add(new BasketItem("Butter", 1));
+            basket.Items.Add(new BasketItem(Product.Milk, 1));
+            basket.Items.Add(new BasketItem(Product.Bread, 1));
+            basket.Items.Add(new BasketItem(Product.Butter, 1));
             var pricelistProvider = new PriceProvider();
             var sut = new BasketCalculator(basket, pricelistProvider);
             //act
@@ -31,8 +31,8 @@ namespace KenShoppingCalculator
             //arrange
             var basket = new Basket();
             
-            basket.Items.Add(new BasketItem("Bread", 2));
-            basket.Items.Add(new BasketItem("Butter", 2));
+            basket.Items.Add(new BasketItem(Product.Bread, 2));
+            basket.Items.Add(new BasketItem(Product.Butter, 2));
             var pricelistProvider = new PriceProvider();
             var sut = new BasketCalculator(basket, pricelistProvider);
             //act
@@ -41,20 +41,37 @@ namespace KenShoppingCalculator
             Assert.AreEqual(3.1, result);
 
         }
+
+        [TestMethod]
+        public void When_4_milk_in_basket_total_should_be_345()
+        {
+            //arrange
+            var basket = new Basket();
+
+            basket.Items.Add(new BasketItem(Product.Milk, 2));
+            basket.Items.Add(new BasketItem(Product.Butter, 2));
+            var pricelistProvider = new PriceProvider();
+            var sut = new BasketCalculator(basket, pricelistProvider);
+            //act
+            var result = sut.CalculateBasketPrice();
+            //assert
+            Assert.AreEqual(3.45, result);
+
+        }
     }
 
     public class PriceProvider
     {
-        private  Dictionary<string, double> _priceList = new Dictionary<string, double>();
+        private  Dictionary<Product, double> _priceList = new Dictionary<Product, double>();
 
         public PriceProvider()
         {
-            _priceList.Add("Milk", 1.15);
-            _priceList.Add("Butter", 0.8);
-            _priceList.Add("Bread", 1);
+            _priceList.Add(Product.Milk, 1.15);
+            _priceList.Add(Product.Butter, 0.8);
+            _priceList.Add(Product.Bread, 1);
         }
 
-        public double GetPrice (string name)
+        public double GetPrice (Product name)
         {
             double amount = 0;
             _priceList.TryGetValue(name, out amount);
@@ -107,8 +124,8 @@ namespace KenShoppingCalculator
         {
             var discounts = new List<Discount>();
             var butterdiscount =
-                basket.Items.Where(x => x.ItemName == Product.Butter.ToString() 
-                && x.ItemQty == 2).Select(x=> new Discount(Product.Bread.ToString(), breadReductionRateWhen2Butter));
+                basket.Items.Where(x => x.ItemName == Product.Butter 
+                && x.ItemQty == 2).Select(x=> new Discount(Product.Bread, breadReductionRateWhen2Butter));
 
             discounts.AddRange(butterdiscount);
 
@@ -119,13 +136,13 @@ namespace KenShoppingCalculator
     }
     public class Discount
     {
-        public Discount(string itemName, double reductionRate)
+        public Discount(Product itemName, double reductionRate)
         {
             ItemName = itemName;
             ReductionRate = reductionRate;
         }
 
-        public string ItemName { get; private set; }
+        public Product ItemName { get; private set; }
         public double ReductionRate { get; private set; }
 
 
@@ -143,13 +160,13 @@ namespace KenShoppingCalculator
 
     public class BasketItem
     {
-        public BasketItem(string name, int qty)
+        public BasketItem(Product name, int qty)
         {
             ItemQty = qty;
             ItemName = name;
         }
 
-        public string ItemName { get; private set; }
+        public Product ItemName { get; private set; }
 
         public int ItemQty { get; private set; }
     }
