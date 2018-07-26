@@ -14,8 +14,8 @@ namespace KenShoppingCalculator
             basket.Items.Add(new BasketItem("Milk", 1));
             basket.Items.Add(new BasketItem("Bread", 1));
             basket.Items.Add(new BasketItem("Butter", 1));
-
-            var sut = new BasketCalculator(basket);
+            var pricelistProvider = new PriceProvider();
+            var sut = new BasketCalculator(basket, pricelistProvider);
             //act
             var result = sut.CalculateBasketPrice();
             //assert
@@ -24,10 +24,27 @@ namespace KenShoppingCalculator
         }
     }
 
+    public class PriceProvider
+    {
+        private  Dictionary<string, double> _priceList = new Dictionary<string, double>();
 
+        public PriceProvider()
+        {
+            _priceList.Add("Milk", 1.15);
+            _priceList.Add("Butter", 0.8);
+            _priceList.Add("Bread", 1);
+        }
+
+        public double GetPrice (string name)
+        {
+            double amount = 0;
+            _priceList.TryGetValue(name, out amount);
+            return amount;
+        }
+    }
     public class BasketCalculator
     {
-        public BasketCalculator(Basket basket)
+        public BasketCalculator(Basket basket, PriceProvider priceProvider)
         {
 
         }
