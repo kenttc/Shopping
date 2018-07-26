@@ -48,8 +48,8 @@ namespace KenShoppingCalculator
             //arrange
             var basket = new Basket();
 
-            basket.Items.Add(new BasketItem(Product.Milk, 2));
-            basket.Items.Add(new BasketItem(Product.Butter, 2));
+            basket.Items.Add(new BasketItem(Product.Milk, 4));
+           
             var pricelistProvider = new PriceProvider();
             var sut = new BasketCalculator(basket, pricelistProvider);
             //act
