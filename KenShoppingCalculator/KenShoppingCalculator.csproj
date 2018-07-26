@@ -48,6 +48,15 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Basket.cs" />
+    <Compile Include="BasketCalculator.cs" />
+    <Compile Include="Bread.cs" />
+    <Compile Include="Butter.cs" />
+    <Compile Include="Discount.cs" />
+    <Compile Include="EnumProduct.cs" />
+    <Compile Include="IBasketItem.cs" />
+    <Compile Include="Milk.cs" />
+    <Compile Include="PriceProvider.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
