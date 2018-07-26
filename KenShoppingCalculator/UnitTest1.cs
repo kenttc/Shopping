@@ -58,6 +58,25 @@ namespace KenShoppingCalculator
             Assert.AreEqual(3.45, result);
 
         }
+
+        [TestMethod]
+        public void When_2_butter_1_bread_8_milk_in_basket_total_should_be_900()
+        {
+            //arrange
+            var basket = new Basket();
+
+            basket.Items.Add(new BasketItem(Product.Milk, 8));
+            basket.Items.Add(new BasketItem(Product.Butter, 2));
+            basket.Items.Add(new BasketItem(Product.Bread, 1));
+
+            var pricelistProvider = new PriceProvider();
+            var sut = new BasketCalculator(basket, pricelistProvider);
+            //act
+            var result = sut.CalculateBasketPrice();
+            //assert
+            Assert.AreEqual(9, result);
+
+        }
     }
 
     public class PriceProvider
@@ -107,10 +126,11 @@ namespace KenShoppingCalculator
        
             return  _basket.Items.Select(x =>
             {
-                var discount = discounts.Where(y => y.ItemName == x.ItemName).FirstOrDefault();
-                if(discount  != null)
+                var discount = discounts.Where(y => y.ItemName == x.ItemName).ToList();
+                if(discount  != null && discount.Count > 0)
                 {
-                  return  (_priceProvider.GetPrice(x.ItemName) * (x.ItemQty- 1)) + (_priceProvider.GetPrice(x.ItemName) *  discount.ReductionRate);
+                  return  (_priceProvider.GetPrice(x.ItemName) * (x.ItemQty- discount.Count)) 
+                    + (_priceProvider.GetPrice(x.ItemName) *  discount.First().ReductionRate * discount.Count());
                 }
                 else
                 {
@@ -129,13 +149,20 @@ namespace KenShoppingCalculator
 
             discounts.AddRange(butterdiscount);
 
-            discounts.AddRange(basket.Items.Where(x => x.ItemName == Product.Milk && x.ItemQty == 4).Select(x => new Discount(Product.Milk, 0)));
-
+            var numDiscountToAdd = basket.Items.Where(x => x.ItemName == Product.Milk)
+             .Select(x => Math.Floor(Convert.ToDouble(x.ItemQty / 4))).FirstOrDefault();
+          //  var discounts = new List<Discount>();
+            for (var i = 0; i < numDiscountToAdd; i++)
+            {
+                discounts.Add(new Discount(Product.Milk, 0));
+            }
             return discounts;
 
         }
 
     }
+
+    
     public class Discount
     {
         public Discount(Product itemName, double reductionRate)
