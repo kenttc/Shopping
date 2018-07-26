@@ -62,18 +62,18 @@ namespace KenShoppingCalculator
 
     public class PriceProvider
     {
-        private  Dictionary<Product, double> _priceList = new Dictionary<Product, double>();
+        private  Dictionary<Product, int> _priceList = new Dictionary<Product, int>();
 
         public PriceProvider()
         {
-            _priceList.Add(Product.Milk, 1.15);
-            _priceList.Add(Product.Butter, 0.8);
-            _priceList.Add(Product.Bread, 1);
+            _priceList.Add(Product.Milk, 115);
+            _priceList.Add(Product.Butter, 80);
+            _priceList.Add(Product.Bread, 100);
         }
 
-        public double GetPrice (Product name)
+        public int GetPrice (Product name)
         {
-            double amount = 0;
+            int amount = 0;
             _priceList.TryGetValue(name, out amount);
             return amount;
         }
@@ -107,10 +107,10 @@ namespace KenShoppingCalculator
        
             return  _basket.Items.Select(x =>
             {
-                var discount = discounts.Where(y => y.ItemName == x.ItemName).Select(z => z.ReductionRate).FirstOrDefault();
-                if(discount > 0)
+                var discount = discounts.Where(y => y.ItemName == x.ItemName).FirstOrDefault();
+                if(discount  != null)
                 {
-                  return  (_priceProvider.GetPrice(x.ItemName) * (x.ItemQty- 1)) + (_priceProvider.GetPrice(x.ItemName) *  discount);
+                  return  (_priceProvider.GetPrice(x.ItemName) * (x.ItemQty- 1)) + (_priceProvider.GetPrice(x.ItemName) *  discount.ReductionRate);
                 }
                 else
                 {
@@ -128,6 +128,8 @@ namespace KenShoppingCalculator
                 && x.ItemQty == 2).Select(x=> new Discount(Product.Bread, breadReductionRateWhen2Butter));
 
             discounts.AddRange(butterdiscount);
+
+            discounts.AddRange(basket.Items.Where(x => x.ItemName == Product.Milk && x.ItemQty == 4).Select(x => new Discount(Product.Milk, 0)));
 
             return discounts;
 
