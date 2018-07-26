@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+
+using System.Linq;
 namespace KenShoppingCalculator
 {
     [TestClass]
@@ -44,14 +46,21 @@ namespace KenShoppingCalculator
     }
     public class BasketCalculator
     {
+        private Basket _basket;
+        private PriceProvider _priceProvider;
+
         public BasketCalculator(Basket basket, PriceProvider priceProvider)
         {
-
+            _basket = basket;   
+            _priceProvider = priceProvider;
         }
         public double CalculateBasketPrice()
         {
-            return 2.95;
-
+           return  _basket.Items.Select(x =>
+            {
+                return _priceProvider.GetPrice(x.ItemName) * x.ItemQty;
+            }).Sum();
+             
         }
     }
 
