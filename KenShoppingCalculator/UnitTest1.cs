@@ -61,6 +61,13 @@ namespace KenShoppingCalculator
             return amount;
         }
     }
+
+    public enum Product
+    {
+        Butter, 
+        Milk, 
+        Bread
+    }
     public class BasketCalculator
     {
         private Basket _basket;
@@ -73,12 +80,41 @@ namespace KenShoppingCalculator
         }
         public double CalculateBasketPrice()
         {
-           return  _basket.Items.Select(x =>
+            //  var discount = _basket.Items
+            var discounts = GetDiscounts(_basket);
+
+            return  _basket.Items.Select(x =>
             {
                 return _priceProvider.GetPrice(x.ItemName) * x.ItemQty;
             }).Sum();
              
         }
+
+        public List<Discount> GetDiscounts(Basket basket)
+        {
+            var butterdiscount =
+                basket.Items.Count(x => x.ItemName == Product.Butter.ToString() 
+                && x.ItemQty == 2);
+
+            //    .Select(x=> { return x.ItemQty >= 2 ? x.ItemQty % 2 : 0; }).FirstOrDefault();
+            
+            return new List<Discount>();
+
+        }
+
+    }
+    public class Discount
+    {
+        public Discount(string itemName, double reductionRate)
+        {
+            ItemName = itemName;
+            ReductionRate = reductionRate;
+        }
+
+        public string ItemName { get; private set; }
+        public double ReductionRate { get; private set; }
+
+
     }
 
     public class Basket
