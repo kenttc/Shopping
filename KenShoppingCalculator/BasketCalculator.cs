@@ -8,16 +8,16 @@ namespace KenShoppingCalculator
 {
     public class BasketCalculator
     {
-        private Basket _basket;
-        private PriceProvider _priceProvider;
+     
+        private IPriceProvider _priceProvider;
 
 
-        public BasketCalculator(Basket basket, PriceProvider priceProvider)
+        public BasketCalculator(IPriceProvider priceProvider)
         {
-            _basket = basket;
+            
             _priceProvider = priceProvider;
         }
-        public double CalculateBasketPrice()
+        public double CalculateBasketPrice(Basket _basket)
         {
 
             var discounts = _basket.Items.SelectMany(x => x.GetDiscounts()).ToList();

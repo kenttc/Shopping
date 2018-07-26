@@ -17,9 +17,9 @@ namespace KenShoppingCalculator
             basket.Items.Add(new Bread(1));
             basket.Items.Add(new Butter(1));
             var pricelistProvider = new PriceProvider();
-            var sut = new BasketCalculator(basket, pricelistProvider);
+            var sut = new BasketCalculator(pricelistProvider);
             //act
-            var result = sut.CalculateBasketPrice();
+            var result = sut.CalculateBasketPrice(basket);
             //assert
             Assert.AreEqual(2.95, result);
 
@@ -34,9 +34,9 @@ namespace KenShoppingCalculator
             basket.Items.Add(new Bread(2));
             basket.Items.Add(new Butter(2));
             var pricelistProvider = new PriceProvider();
-            var sut = new BasketCalculator(basket, pricelistProvider);
+            var sut = new BasketCalculator(pricelistProvider);
             //act
-            var result = sut.CalculateBasketPrice();
+            var result = sut.CalculateBasketPrice(basket);
             //assert
             Assert.AreEqual(3.1, result);
 
@@ -51,9 +51,9 @@ namespace KenShoppingCalculator
             basket.Items.Add(new Milk(4));
            
             var pricelistProvider = new PriceProvider();
-            var sut = new BasketCalculator(basket, pricelistProvider);
+            var sut = new BasketCalculator(pricelistProvider);
             //act
-            var result = sut.CalculateBasketPrice();
+            var result = sut.CalculateBasketPrice(basket);
             //assert
             Assert.AreEqual(3.45, result);
 
@@ -70,9 +70,9 @@ namespace KenShoppingCalculator
             basket.Items.Add(new Bread(1));
 
             var pricelistProvider = new PriceProvider();
-            var sut = new BasketCalculator(basket, pricelistProvider);
+            var sut = new BasketCalculator(pricelistProvider);
             //act
-            var result = sut.CalculateBasketPrice();
+            var result = sut.CalculateBasketPrice(basket);
             //assert
             Assert.AreEqual(9, result);
 

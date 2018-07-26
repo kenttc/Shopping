@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KenShoppingCalculator
 {
-    public class PriceProvider
+    public class PriceProvider : IPriceProvider
     {
         private Dictionary<EnumProduct, int> _priceList = new Dictionary<EnumProduct, int>();
 
@@ -23,5 +23,10 @@ namespace KenShoppingCalculator
             _priceList.TryGetValue(name, out amount);
             return amount;
         }
+    }
+
+    public interface IPriceProvider
+    {
+        int GetPrice(EnumProduct name);
     }
 }
