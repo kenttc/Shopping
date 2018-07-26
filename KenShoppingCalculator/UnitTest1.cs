@@ -116,7 +116,7 @@ namespace KenShoppingCalculator
                 {
                     return _priceProvider.GetPrice(x.ItemName) * x.ItemQty;
                 }
-            }).Sum();
+            }).Sum() /100;
              
         }
 
