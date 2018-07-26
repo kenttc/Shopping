@@ -24,6 +24,23 @@ namespace KenShoppingCalculator
             Assert.AreEqual(2.95, result);
 
         }
+
+        [TestMethod]
+        public void When_2_bread_2_butter_in_basket_total_should_be_310()
+        {
+            //arrange
+            var basket = new Basket();
+            
+            basket.Items.Add(new BasketItem("Bread", 2));
+            basket.Items.Add(new BasketItem("Butter", 2));
+            var pricelistProvider = new PriceProvider();
+            var sut = new BasketCalculator(basket, pricelistProvider);
+            //act
+            var result = sut.CalculateBasketPrice();
+            //assert
+            Assert.AreEqual(3.1, result);
+
+        }
     }
 
     public class PriceProvider
